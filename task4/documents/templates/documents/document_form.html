@@ -1,0 +1,15 @@
+{% extends "app_base.html" %}
+{% block title %}{% if object %}Edit{% else %}New{% endif %} document - DocPortal{% endblock %}
+{% block heading %}{% if object %}Edit document{% else %}New document{% endif %}{% endblock %}
+
+{% block content %}
+<section class="panel narrow">
+  <form method="post" class="form">{% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-actions">
+      <button class="btn" type="submit">Save</button>
+      <a class="btn ghost" href="{% url 'documents:list' %}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

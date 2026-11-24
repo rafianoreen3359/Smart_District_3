@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Sign up - DocPortal{% endblock %}
+{% block body %}
+<div class="auth">
+  <div class="auth-card">
+    <div class="auth-brand"><span class="logo">N</span> DocPortal</div>
+    <h1>Create your account</h1>
+    <p class="muted">New accounts start as Viewers. An administrator can change your role.</p>
+    <form method="post" class="form">{% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn block" type="submit">Sign up</button>
+    </form>
+    <p class="muted center">Already registered? <a href="{% url 'login' %}">Log in</a></p>
+  </div>
+</div>
+{% endblock %}

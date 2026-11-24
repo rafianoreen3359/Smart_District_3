@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}API Console - DocPortal{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/api.css' %}">{% endblock %}
+
+{% block body %}
+<header class="c-top">
+  <a class="brand" href="{% url 'documents:list' %}"><span class="logo">D</span> DocPortal <span class="tag">API Console</span></a>
+  <div class="c-top-right">
+    <span class="live"><i class="dot"></i> Live</span>
+    <a class="btn sm ghost" href="{% url 'documents:list' %}">Web portal</a>
+  </div>
+</header>
+
+<div class="c-layout">
+  <aside class="c-side">
+    <section class="panel">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="jwt" type="button">User (JWT)</button>
+        <button class="tab" data-tab="key" type="button">API key</button>
+      </div>
+
+      <form id="jwt-form" class="form">
+        <p><label for="jwt-email">Email or username</label><input id="jwt-email" type="text" value="editor@example.com" autocomplete="username"></p>
+        <p><label for="jwt-password">Password</label><input id="jwt-password" type="password" value="Pass12345!" autocomplete="current-password"></p>
+        <button class="btn block" type="submit">Get token</button>
+      </form>
+
+      <form id="key-form" class="form" hidden>
+        <p><label for="key-input">API key</label><input id="key-input" type="text" placeholder="paste your key" autocomplete="off"></p>
+        <button class="btn block" type="submit">Use key</button>
+        <p class="muted small">Create one with <code>python manage.py create_api_key</code>. Keys are read-only.</p>
+      </form>
+
+      <div id="who" class="who" hidden>
+        <div id="who-main"></div>
+        <button id="logout" class="btn sm ghost" type="button">Sign out</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>New document</h3>
+      <form id="create-form" class="form">
+        <p><label for="new-title">Title</label><input id="new-title" type="text" required></p>
+        <p><label for="new-content">Content</label><textarea id="new-content" rows="4"></textarea></p>
+        <button class="btn block" type="submit">Create</button>
+      </form>
+    </section>
+
+    <section class="panel note">
+      <h3>How to read this</h3>
+      <p class="muted small">Every button is always shown so you can see exactly how the API answers each role, including the custom 403 messages.</p>
+    </section>
+  </aside>
+
+  <main class="c-main">
+    <div class="c-head">
+      <h2>Documents <span id="count" class="count"></span></h2>
+      <button id="reload" class="btn sm ghost" type="button">Refresh</button>
+    </div>
+    <div id="docs" class="cards"><p class="empty">Sign in to load documents.</p></div>
+    <div class="pager">
+      <button id="prev" class="btn sm ghost" type="button" disabled>&larr; Prev</button>
+      <span id="page-label" class="muted small"></span>
+      <button id="next" class="btn sm ghost" type="button" disabled>Next &rarr;</button>
+    </div>
+    <details class="log">
+      <summary>Last API response</summary>
+      <pre id="log">Nothing yet.</pre>
+    </details>
+  </main>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<script src="{% static 'js/console.js' %}"></script>
+{% endblock %}

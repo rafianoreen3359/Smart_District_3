@@ -1,0 +1,11 @@
+{% extends "store/base.html" %}
+{# This page never prints the notification count, so no notification query runs #}
+{% block notifications_badge %}{% endblock %}
+{% block title %}About - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="panel narrow">
+  <h1>About {{ SITE_NAME }}</h1>
+  <p>We are a small team that picks useful, well-made products and ships them quickly.</p>
+  <p>Questions? Write to <a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a> and we will reply within one business day.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "app_base.html" %}
+{% block title %}Access denied - DocPortal{% endblock %}
+{% block heading %}Access denied{% endblock %}
+{% block content %}
+<section class="panel narrow center">
+  <div class="big-code">403</div>
+  <h1>You do not have permission</h1>
+  <p class="muted">Your role does not allow this action. Ask a Reviewer or an administrator if you need access.</p>
+  <a class="btn" href="{% url 'documents:list' %}">Back to dashboard</a>
+</section>
+{% endblock %}

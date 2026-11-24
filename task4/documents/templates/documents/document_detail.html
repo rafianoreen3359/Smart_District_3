@@ -1,0 +1,31 @@
+{% extends "app_base.html" %}
+{% load doc_perms %}
+{% block title %}{{ document.title }} - DocPortal{% endblock %}
+{% block heading %}Document{% endblock %}
+
+{% block content %}
+<article class="panel doc">
+  <div class="doc-head">
+    <div>
+      <h1>{{ document.title }}</h1>
+      <p class="muted">By <strong>{{ document.owner.username }}</strong> &middot; created {{ document.created_at|date:"M d, Y" }} &middot; updated {{ document.updated_at|timesince }} ago</p>
+    </div>
+    <span class="pill {{ document.status }}">{{ document.get_status_display }}</span>
+  </div>
+
+  <div class="doc-body">{{ document.content|linebreaks|default:"<p class='muted'>This document is empty.</p>" }}</div>
+
+  <div class="doc-actions">
+    <a class="btn ghost" href="{% url 'documents:list' %}">&larr; Back</a>
+    {% if perms.documents.change_document and user|can_edit:document %}
+      <a class="btn" href="{% url 'documents:edit' document.pk %}">Edit</a>
+    {% endif %}
+    {% if perms.documents.publish_document and document.status == 'draft' %}
+      <form method="post" action="{% url 'documents:publish' document.pk %}">{% csrf_token %}<button class="btn success">Publish</button></form>
+    {% endif %}
+    {% if perms.documents.archive_document and document.status != 'archived' %}
+      <form method="post" action="{% url 'documents:archive' document.pk %}">{% csrf_token %}<button class="btn warn">Archive</button></form>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}

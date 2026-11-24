@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="app">
+  <div class="backdrop" id="backdrop"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="{% url 'documents:list' %}"><span class="logo">D</span> DocPortal</a>
+    <nav class="nav">
+      <a href="{% url 'documents:list' %}">Dashboard</a>
+      {% if perms.documents.add_document %}<a href="{% url 'documents:create' %}">New document</a>{% endif %}
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin panel</a>{% endif %}
+    </nav>
+    {% if user.is_authenticated %}
+    <div class="user-card">
+      <div class="avatar">{{ user.username|slice:":1"|upper }}</div>
+      <div class="user-meta"><strong>{{ user.username }}</strong><span class="role {{ user.role }}">{{ user.get_role_display }}</span></div>
+    </div>
+    {% endif %}
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" id="menu-btn" aria-label="Open menu">&#9776;</button>
+      <h2>{% block heading %}{% endblock %}</h2>
+      <div class="topbar-right">
+        <span class="live"><i class="dot"></i> Live</span>
+        <time id="clock"></time>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn sm ghost">Log out</button></form>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="toasts">{% for m in messages %}<div class="toast {{ m.tags }}">{{ m }}</div>{% endfor %}</div>
+    <main class="content">{% block content %}{% endblock %}</main>
+  </div>
+</div>
+{% endblock %}

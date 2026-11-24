@@ -1,0 +1,29 @@
+{% extends "store/base.html" %}
+{% block title %}Your cart - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<h1 class="section-title">Your cart</h1>
+{% if items %}
+<div class="panel">
+  <table class="table">
+    <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
+    <tbody>
+    {% for item in items %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>${{ item.price }}</td>
+        <td>{{ item.qty }}</td>
+        <td>${{ item.line_total }}</td>
+        <td><form method="post" action="{% url 'store:remove_from_cart' item.pk %}">{% csrf_token %}<button class="btn-link danger">Remove</button></form></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="cart-total">
+    <form method="post" action="{% url 'store:clear_cart' %}">{% csrf_token %}<button class="btn ghost">Clear cart</button></form>
+    <strong>Total: ${{ cart_total }}</strong>
+  </div>
+</div>
+{% else %}
+<div class="panel empty"><p>Your cart is empty.</p><a class="btn" href="{% url 'store:home' %}">Browse products</a></div>
+{% endif %}
+{% endblock %}

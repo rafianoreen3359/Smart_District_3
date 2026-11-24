@@ -1,0 +1,35 @@
+{% extends "store/base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Everyday essentials, beautifully made.</h1>
+    <p>Discover a small collection of products we love. Add them to your cart as a guest, no account needed.</p>
+    <a class="btn" href="#products">Shop now</a>
+  </div>
+</section>
+
+<section class="features">
+  <div><span>&#128666;</span><strong>Fast delivery</strong><small>2-4 business days</small></div>
+  <div><span>&#128274;</span><strong>Secure checkout</strong><small>Your data stays safe</small></div>
+  <div><span>&#8634;</span><strong>Easy returns</strong><small>30 day guarantee</small></div>
+</section>
+
+<h2 id="products" class="section-title">Our products</h2>
+<div class="grid">
+{% for p in products %}
+  <article class="card">
+    <div class="thumb" style="--hue: {% widthratio p.pk 1 47 %}">{{ p.name|slice:":1" }}</div>
+    <div class="card-body">
+      <h3>{{ p.name }}</h3>
+      <p class="muted">{{ p.description }}</p>
+      <div class="card-foot">
+        <span class="price">${{ p.price }}</span>
+        <form method="post" action="{% url 'store:add_to_cart' p.pk %}">{% csrf_token %}<button class="btn small">Add to cart</button></form>
+      </div>
+    </div>
+  </article>
+{% empty %}
+  <p class="muted">No products yet. Run <code>python manage.py seed_store</code> or add some in the admin.</p>
+{% endfor %}
+</div>
+{% endblock %}

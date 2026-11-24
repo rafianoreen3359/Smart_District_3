@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Log in - DocPortal{% endblock %}
+{% block body %}
+<div class="auth">
+  <div class="auth-card">
+    <div class="auth-brand"><span class="logo">N</span> DocPortal</div>
+    <h1>Welcome back</h1>
+    <p class="muted">Log in with your email or username.</p>
+    {% for m in messages %}<div class="toast {{ m.tags }}">{{ m }}</div>{% endfor %}
+    <form method="post" class="form">{% csrf_token %}
+      {{ form.non_field_errors }}
+      {{ form.as_p }}
+      <button class="btn block" type="submit">Log in</button>
+    </form>
+    <p class="muted center">No account? <a href="{% url 'signup' %}">Sign up</a></p>
+  </div>
+</div>
+{% endblock %}

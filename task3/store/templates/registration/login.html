@@ -1,0 +1,12 @@
+{% extends "store/base.html" %}
+{% block title %}Login - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="panel narrow">
+  <h1>Login</h1>
+  <form method="post" class="form">{% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Login</button>
+  </form>
+  <p class="muted">Demo account after running seed_store: <code>demo</code> / <code>demo12345</code></p>
+</section>
+{% endblock %}

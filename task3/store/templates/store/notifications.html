@@ -1,0 +1,15 @@
+{% extends "store/base.html" %}
+{% block title %}Notifications - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<h1 class="section-title">Notifications</h1>
+<div class="panel">
+  <ul class="notes">
+  {% for n in notification_list %}
+    <li class="{% if not n.is_read %}unread{% endif %}"><span>{{ n.message }}</span><small>{{ n.created_at|date:"M d, H:i" }}</small></li>
+  {% empty %}
+    <li class="muted">You have no notifications.</li>
+  {% endfor %}
+  </ul>
+  <form method="post" action="{% url 'store:mark_all_read' %}">{% csrf_token %}<button class="btn small">Mark all as read</button></form>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+<body>
+<div class="topbar">Need help? Email <a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a> &middot; Free shipping over $50</div>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="{% url 'store:home' %}"><span class="logo">R</span> {{ SITE_NAME }}</a>
+
+    <nav class="links">
+      <a href="{% url 'store:home' %}">Shop</a>
+      <a href="{% url 'store:about' %}">About</a>
+    </nav>
+
+    <div class="actions">
+      {% block notifications_badge %}{% if user.is_authenticated %}<a class="bell" href="{% url 'store:notifications' %}" title="Notifications">&#128276; <span class="badge">Unread: {{ unread_notifications }}</span></a>{% endif %}{% endblock %}
+
+      <a class="cart-pill" href="{% url 'store:cart' %}">&#128722; <span>Cart: {{ cart_count }} items, ${{ cart_total }}</span></a>
+
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button class="btn-link" type="submit">Logout ({{ user.username }})</button></form>
+      {% else %}
+        <a class="btn-link" href="{% url 'login' %}">Login</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{% if messages %}
+<div class="container">{% for m in messages %}<div class="flash {{ m.tags }}">{{ m }}</div>{% endfor %}</div>
+{% endif %}
+
+<main class="container">{% block content %}{% endblock %}</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><strong>{{ SITE_NAME }}</strong><p>Quality everyday products, delivered to your door.</p></div>
+    <div><strong>Support</strong><p><a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a></p></div>
+    <div><strong>Shop</strong><p><a href="{% url 'store:home' %}">All products</a><br><a href="{% url 'store:cart' %}">Your cart</a></p></div>
+  </div>
+  <div class="container copyright">&copy; {{ CURRENT_YEAR }} {{ SITE_NAME }}. All rights reserved.</div>
+</footer>
+</body>
+</html>
