@@ -1,0 +1,41 @@
+{% extends "chat/base.html" %}
+{% block title %}Chat rooms · Relay{% endblock %}
+{% block content %}
+<section class="lobby-head wrap">
+  <div>
+    <h1>Chat rooms</h1>
+    <p class="lede">Pick a room to join, or start a new one. Everyone in a room sees messages the moment they are sent.</p>
+  </div>
+  <form class="room-form" method="post" novalidate>
+    {% csrf_token %}
+    {% include "chat/_form.html" %}
+    <button type="submit" class="btn primary">Create or join</button>
+  </form>
+</section>
+
+<section class="wrap lobby-list" aria-label="Rooms">
+  {% if rooms %}
+    <ul class="room-grid">
+      {% for room in rooms %}
+      <li>
+        <a class="room-card" href="{% url 'room' room.name %}">
+          <h2>{{ room.name }}</h2>
+          <p class="room-meta">
+            {{ room.message_count }} message{{ room.message_count|pluralize }}
+            {% if room.created_by %}, started by {{ room.created_by.username }}{% endif %}
+          </p>
+          <span class="room-online {% if room.online %}live{% endif %}">
+            <span class="dot"></span>{{ room.online }} online
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty-state">
+      <h2>No rooms yet</h2>
+      <p>Create the first one with the form above.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

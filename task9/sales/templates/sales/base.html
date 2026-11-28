@@ -1,0 +1,24 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Ledgerline{% endblock %} · Ledgerline</title>
+  <link rel="stylesheet" href="{% static 'sales/css/site.css' %}">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="{% url 'home' %}"><span class="brand__mark">L</span>Ledgerline</a>
+    <nav class="nav__links">
+      <a href="{% url 'report_list' %}">Reports</a>
+      <a href="{% url 'product_list' %}">Catalog</a>
+      <a class="btn btn--sm" href="{% url 'report_create' %}">Request report</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap main">{% block content %}{% endblock %}</main>
+<footer class="foot"><div class="wrap">© Ledgerline Analytics · Sales reporting for growing retailers</div></footer>
+<script src="{% static 'sales/js/status.js' %}" defer></script>
+</body>
+</html>

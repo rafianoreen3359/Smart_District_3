@@ -1,0 +1,19 @@
+{% extends "sales/base.html" %}
+{% block title %}Request a report{% endblock %}
+{% block content %}
+<div class="narrow">
+  <h1>Request a sales report</h1>
+  <p class="muted">We will email you a download link when it is ready. You can follow progress live on the next page.</p>
+  <form method="post" class="card form" novalidate>
+    {% csrf_token %}
+    {% for f in form %}
+      <div class="field {% if f.errors %}field--err{% endif %}">
+        <label for="{{ f.id_for_label }}">{{ f.label }}</label>
+        {{ f }}
+        {% for e in f.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      </div>
+    {% endfor %}
+    <button class="btn btn--block" type="submit">Generate report</button>
+  </form>
+</div>
+{% endblock %}

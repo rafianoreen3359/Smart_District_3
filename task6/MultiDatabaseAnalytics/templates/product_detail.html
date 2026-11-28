@@ -1,0 +1,22 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+
+<div class="detail-card">
+
+    <h1>{{ product.name }}</h1>
+
+    <p>{{ product.description }}</p>
+
+    <h2>Rs. {{ product.price }}</h2>
+
+    <a href="{% url 'home' %}" class="btn">
+        Back to Products
+    </a>
+
+</div>
+
+{% endblock %}

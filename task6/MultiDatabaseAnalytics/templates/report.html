@@ -1,0 +1,56 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Analytics Report{% endblock %}
+
+{% block content %}
+
+<h1>Product Analytics Report</h1>
+
+<p class="subtitle">
+    Total views of each product.
+</p>
+
+<div class="table-container">
+
+<table>
+
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Total Views</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for item in report_data %}
+
+        <tr>
+            <td>{{ item.product.id }}</td>
+            <td>{{ item.product.name }}</td>
+            <td>Rs. {{ item.product.price }}</td>
+            <td>
+                <span class="view-count">
+                    {{ item.total_views }}
+                </span>
+            </td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="4">No products found.</td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+{% endblock %}

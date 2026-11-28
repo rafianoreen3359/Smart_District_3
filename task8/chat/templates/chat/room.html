@@ -1,0 +1,50 @@
+{% extends "chat/base.html" %}
+{% load static %}
+{% block title %}#{{ room.name }} · Relay{% endblock %}
+{% block body_class %}room-page{% endblock %}
+
+{% block header_extra %}
+  <span class="pill" data-status-for="chat" data-status="connecting"><span class="dot"></span><span class="label">Connecting</span></span>
+{% endblock %}
+
+{% block content %}
+<div class="room wrap" id="chat-app"
+     data-room="{{ room.name }}" data-username="{{ user.username }}" data-max-length="{{ max_length }}">
+
+  <section class="chat" aria-labelledby="room-title">
+    <header class="chat-head">
+      <div>
+        <h1 id="room-title"><span class="hash">#</span>{{ room.name }}</h1>
+        <a class="back" href="{% url 'lobby' %}">All rooms</a>
+      </div>
+    </header>
+
+    <div class="offline" id="chat-offline" role="alert" hidden>
+      <span>Could not reach the server. Check your connection or sign in again.</span>
+      <button type="button" class="btn ghost small" id="chat-retry">Try again</button>
+    </div>
+
+    <ol class="chat-feed" id="chat-feed" role="log" aria-live="polite" aria-label="Messages in {{ room.name }}">
+      <li class="empty">Loading the last {{ history_limit }} messages…</li>
+    </ol>
+
+    <p class="typing" id="chat-typing" role="status" aria-live="polite"></p>
+
+    <form class="chat-composer" id="chat-form" autocomplete="off">
+      <label for="chat-input" class="sr">Message</label>
+      <textarea id="chat-input" rows="1" maxlength="{{ max_length }}" placeholder="Message #{{ room.name }}"></textarea>
+      <button type="submit" class="btn primary" id="chat-send">Send</button>
+    </form>
+  </section>
+
+  <aside class="online" aria-labelledby="online-title">
+    <h2 id="online-title">Online now <span class="count-badge" id="online-count">0</span></h2>
+    <ul id="online-list"></ul>
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'realtime/js/common.js' %}" defer></script>
+  <script src="{% static 'chat/js/chat.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "sales/base.html" %}
+{% block title %}Sales reporting{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Sales analytics</p>
+  <h1>Board-ready sales reports,<br>without the spreadsheet wrangling.</h1>
+  <p class="lead">Pick a date range and region. We build the CSV in the background and email you a secure link the moment it is ready.</p>
+  <div class="hero__cta">
+    <a class="btn" href="{% url 'report_create' %}">Request a report</a>
+    <a class="btn btn--ghost" href="{% url 'product_create' %}">Upload a product photo</a>
+  </div>
+</section>
+<section class="stats">
+  <div class="stat"><span class="stat__n">${{ revenue|floatformat:0 }}</span><span class="stat__l">Revenue on record</span></div>
+  <div class="stat"><span class="stat__n">{{ units }}</span><span class="stat__l">Units sold</span></div>
+  <div class="stat"><span class="stat__n">{{ reports }}</span><span class="stat__l">Reports generated</span></div>
+  <div class="stat"><span class="stat__n">{{ products }}</span><span class="stat__l">Catalog products</span></div>
+</section>
+<section class="features">
+  <article class="card"><h3>Runs in the background</h3><p>Requests return instantly. Heavy exports run on workers, so the site never stalls.</p></article>
+  <article class="card"><h3>Live progress</h3><p>Watch a report move from Pending to Done in real time, including email delivery.</p></article>
+  <article class="card"><h3>Resilient delivery</h3><p>Email hiccups are retried automatically with exponential backoff.</p></article>
+</section>
+{% endblock %}

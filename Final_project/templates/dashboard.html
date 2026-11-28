@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-6 text-2xl font-bold">Welcome back, {{ request.user.full_name|default:request.user.email }}</h1>
+<div class="mb-8 grid gap-4 sm:grid-cols-3">
+  <div class="card"><p class="text-sm text-slate-500">Open tasks</p><p class="text-3xl font-bold">{{ stats.open }}</p></div>
+  <div class="card"><p class="text-sm text-slate-500">Due soon (48h)</p><p class="text-3xl font-bold text-amber-600">{{ stats.due_soon }}</p></div>
+  <div class="card"><p class="text-sm text-slate-500">Overdue</p><p class="text-3xl font-bold text-rose-600">{{ stats.overdue }}</p></div>
+</div>
+<div class="grid gap-6 lg:grid-cols-2">
+  <section class="card">
+    <h2 class="mb-3 font-semibold">Overdue tasks</h2>
+    {% for t in overdue_list %}
+      <div class="flex items-center justify-between border-b border-slate-100 py-2 text-sm last:border-0">
+        <span>{{ t.title }}</span><span class="badge bg-rose-100 text-rose-700">{{ t.project.name }}</span>
+      </div>
+    {% empty %}<p class="text-sm text-slate-400">Nothing overdue 🎉</p>{% endfor %}
+  </section>
+  <section class="card">
+    <h2 class="mb-3 font-semibold">Your projects</h2>
+    {% for p in projects %}
+      <a href="{% url 'board' p.pk %}" class="flex items-center justify-between rounded-lg px-2 py-2 text-sm hover:bg-slate-50">
+        <span class="font-medium">{{ p.name }}</span><span class="text-brand-600">Board →</span>
+      </a>
+    {% empty %}<p class="text-sm text-slate-400">No projects yet.</p>{% endfor %}
+  </section>
+</div>
+{% endblock %}

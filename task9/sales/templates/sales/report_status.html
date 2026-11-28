@@ -1,0 +1,39 @@
+{% extends "sales/base.html" %}
+{% block title %}Report status{% endblock %}
+{% block content %}
+<div class="narrow" data-poll-url="{% url 'report_status_json' r.pk %}" data-kind="report" id="live">
+  <p class="muted"><a href="{% url 'report_list' %}">← All reports</a></p>
+  <div class="page-head">
+    <h1>Report {{ r.date_from|date:"M j" }} – {{ r.date_to|date:"M j, Y" }}</h1>
+    <span class="badge badge--{{ r.status }}" data-bind="status">{{ r.get_status_display }}</span>
+  </div>
+
+  <div class="card">
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ r.progress }}" data-bind="progressbar">
+      <div class="progress__bar {% if r.status == 'processing' %}is-live{% endif %}" style="width: {{ r.progress }}%" data-bind="bar"></div>
+    </div>
+    <div class="progress__meta"><span><b data-bind="percent">{{ r.progress }}</b>%</span><span><b data-bind="rows">{{ r.rows_written }}</b> rows</span></div>
+
+    <ol class="steps">
+      {% for s in data.steps %}
+      <li class="step step--{{ s.state }}" data-step="{{ s.key }}">
+        <span class="step__dot"></span>
+        <div><strong>{{ s.label }}</strong><small data-hint>{{ s.hint }}</small></div>
+      </li>
+      {% endfor %}
+    </ol>
+
+    <div class="alert alert--err" data-bind="error" {% if not r.error %}hidden{% endif %}>{{ r.error }}</div>
+    <div class="alert alert--warn" data-bind="email_error" {% if r.email_status != 'retrying' %}hidden{% endif %}>
+      Email attempt failed: <span data-bind="email_error_text">{{ r.email_error }}</span>. Retrying with exponential backoff…
+    </div>
+
+    <div class="actions">
+      <a class="btn" data-bind="download" href="{% if data.download_url %}{{ data.download_url }}{% endif %}" {% if not data.download_url %}hidden{% endif %}>Download CSV</a>
+      <span class="chip">Celery: <b data-bind="celery_state">{{ data.celery_state|default:"-" }}</b></span>
+      <span class="chip" data-bind="conn">● live</span>
+    </div>
+  </div>
+  <p class="muted small">Sending to {{ r.email }}. Open the Mailpit inbox at <a href="http://localhost:8025" target="_blank" rel="noopener">localhost:8025</a> in development.</p>
+</div>
+{% endblock %}

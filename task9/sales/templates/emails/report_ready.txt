@@ -1,0 +1,8 @@
+Hi {{ report.requester_name }},
+
+Your sales report for {{ report.date_from }} to {{ report.date_to }} ({{ report.get_region_display }}) is ready.
+{{ report.rows_written }} rows.
+
+Download: {{ url }}
+
+- Ledgerline Analytics

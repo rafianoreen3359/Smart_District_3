@@ -1,0 +1,164 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relay: live echo board and counter</title>
+  <meta name="description" content="Send messages and ticks over WebSockets and watch the server answer in real time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'realtime/css/styles.css' %}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232b50ff'/%3E%3Ccircle cx='10' cy='16' r='3' fill='white'/%3E%3Cpath d='M16 9a10 10 0 0 1 0 14M21 5a16 16 0 0 1 0 22' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body data-max-length="{{ max_length }}">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="brand" href="/" aria-label="Relay home">
+        <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><circle cx="10" cy="16" r="3" fill="#fff"/><path d="M16 9a10 10 0 0 1 0 14M21 5a16 16 0 0 1 0 22" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
+        <span>Relay</span>
+      </a>
+      <nav aria-label="Sections">
+        <a href="#board">Echo board</a>
+        <a href="#counter">Counter</a>
+        <a href="#protocol">Message format</a>
+      </nav>
+      <span class="pill" data-status-for="board" data-status="connecting"><span class="dot"></span><span class="label">Connecting</span></span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <h1>Send it. Watch the server answer.</h1>
+          <p class="lede">Relay keeps two live WebSocket connections open to the server. Type a message and it comes straight back with a server timestamp, or tick a counter that the server keeps for you. If the connection drops, Relay reconnects on its own.</p>
+          <p class="hero-actions">
+            <a class="btn primary" href="#board">Try the echo board</a>
+            <a class="btn ghost" href="#counter">Open the counter</a>
+          </p>
+        </div>
+
+        <aside class="conn-card" aria-label="Connection status">
+          <h2>Connections</h2>
+          <ul>
+            <li>
+              <div><strong>Echo board</strong><code>/ws/board/</code></div>
+              <span class="pill" data-status-for="board" data-status="connecting"><span class="dot"></span><span class="label">Connecting</span></span>
+            </li>
+            <li>
+              <div><strong>Counter</strong><code>/ws/counter/<span data-start-label>0</span>/</code></div>
+              <span class="pill" data-status-for="counter" data-status="connecting"><span class="dot"></span><span class="label">Connecting</span></span>
+            </li>
+          </ul>
+          <p class="fine">Lost connections retry automatically, waiting a little longer after each failed attempt (up to 10 seconds).</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panels wrap">
+      <article class="panel" id="board" aria-labelledby="board-title">
+        <header class="panel-head">
+          <div>
+            <h2 id="board-title">Echo board</h2>
+            <p>Every message returns with the time the server received it. Messages over {{ max_length }} characters are rejected.</p>
+          </div>
+          <span class="pill" data-status-for="board" data-status="connecting"><span class="dot"></span><span class="label">Connecting</span></span>
+        </header>
+
+        <ol class="feed" id="board-feed" role="log" aria-live="polite" aria-label="Echo board messages">
+          <li class="empty">No messages yet. Write one below.</li>
+        </ol>
+
+        <form class="composer" id="board-form" autocomplete="off">
+          <label for="board-input" class="sr">Message</label>
+          <textarea id="board-input" rows="2" placeholder="Write a message"></textarea>
+          <div class="composer-row">
+            <span class="count" id="board-count" aria-live="off">0 / {{ max_length }}</span>
+            <div class="composer-actions">
+              <button type="button" class="btn ghost small" id="board-drop" title="Close the socket to see automatic reconnecting">Drop connection</button>
+              <button type="submit" class="btn primary small" id="board-send">Send message</button>
+            </div>
+          </div>
+        </form>
+      </article>
+
+      <article class="panel" id="counter" aria-labelledby="counter-title">
+        <header class="panel-head">
+          <div>
+            <h2 id="counter-title">Counter</h2>
+            <p>The server holds the count for this connection. Each tick adds one.</p>
+          </div>
+          <span class="pill" data-status-for="counter" data-status="connecting"><span class="dot"></span><span class="label">Connecting</span></span>
+        </header>
+
+        <div class="readout" aria-live="off">
+          <output id="counter-value" for="counter-tick">0</output>
+          <span class="readout-sub" id="counter-sub">Waiting for the server</span>
+        </div>
+
+        <div class="counter-controls">
+          <button type="button" class="btn primary" id="counter-tick">Tick +1</button>
+          <form id="counter-form" class="start-form" autocomplete="off">
+            <label for="counter-start">Start at</label>
+            <input id="counter-start" type="number" min="0" step="1" value="0" inputmode="numeric">
+            <button type="submit" class="btn ghost small">Reconnect</button>
+          </form>
+        </div>
+        <p class="field-error" id="counter-error" role="alert" hidden></p>
+
+        <ol class="feed short" id="counter-feed" role="log" aria-live="polite" aria-label="Counter events">
+          <li class="empty">Ticks appear here.</li>
+        </ol>
+      </article>
+    </section>
+
+    <section class="protocol wrap" id="protocol" aria-labelledby="protocol-title">
+      <h2 id="protocol-title">Message format</h2>
+      <p class="section-lede">Both endpoints speak JSON. These are the events you will see in the feeds above.</p>
+      <div class="code-grid">
+        <figure>
+          <figcaption>Echo board, <code>/ws/board/</code></figcaption>
+<pre><code>// you send
+{ "text": "hello" }
+
+// server replies
+{ "type": "echo",
+  "text": "hello",
+  "timestamp": "2026-11-24T09:14:03+00:00" }
+
+// over {{ max_length }} characters
+{ "type": "error",
+  "code": "message_too_long",
+  "max_length": {{ max_length }} }</code></pre>
+        </figure>
+        <figure>
+          <figcaption>Counter, <code>/ws/counter/&lt;start&gt;/</code></figcaption>
+<pre><code>// you send
+{ "action": "tick" }
+
+// server replies
+{ "type": "counter",
+  "value": 8,
+  "timestamp": "2026-11-24T09:14:05+00:00" }
+
+// unknown action
+{ "type": "error",
+  "code": "unknown_action" }</code></pre>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Relay runs on Django, Channels and Daphne.</span>
+      <span>Timestamps are in UTC, shown in your local time.</span>
+    </div>
+  </footer>
+
+  <script src="{% static 'realtime/js/app.js' %}" defer></script>
+</body>
+</html>

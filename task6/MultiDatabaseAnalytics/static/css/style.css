@@ -1,0 +1,22 @@
+body {
+    background-color: #eaf2ff;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: #172554;
+    color: white;
+    padding: 20px;
+}
+
+h1 {
+    color: #2563eb;
+}
+
+.product-card {
+    background: white;
+    padding: 25px;
+    margin: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px #00000015;
+}

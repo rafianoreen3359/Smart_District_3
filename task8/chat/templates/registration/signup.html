@@ -1,0 +1,16 @@
+{% extends "chat/base.html" %}
+{% block title %}Create account · Relay{% endblock %}
+{% block content %}
+<section class="auth wrap">
+  <div class="auth-card">
+    <h1>Create your account</h1>
+    <p class="auth-sub">It takes a minute, and you can join any room right after.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "chat/_form.html" %}
+      <button type="submit" class="btn primary block">Create account</button>
+    </form>
+    <p class="auth-alt">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+  </div>
+</section>
+{% endblock %}

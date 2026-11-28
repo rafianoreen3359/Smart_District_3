@@ -1,0 +1,14 @@
+{% extends "sales/base.html" %}
+{% block title %}Catalog{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Catalog</h1><a class="btn btn--sm" href="{% url 'product_create' %}">Add product</a></div>
+<div class="grid">
+{% for p in products %}
+  <a class="card product" href="{{ p.get_absolute_url }}">
+    <div class="product__img">{% with v=p.variants.all|first %}{% if v.image %}<img src="{{ v.image.url }}" alt="{{ p.name }}">{% else %}<span class="muted small">Resizing…</span>{% endif %}{% endwith %}</div>
+    <div class="product__body"><strong>{{ p.name }}</strong><span class="muted small">{{ p.sku }} · ${{ p.price }}</span>
+    <span class="badge badge--p-{{ p.state }}">{{ p.get_state_display }}</span></div>
+  </a>
+{% empty %}<p class="muted">No products yet.</p>{% endfor %}
+</div>
+{% endblock %}

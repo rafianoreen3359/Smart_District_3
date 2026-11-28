@@ -1,0 +1,9 @@
+<div class="user-menu">
+  {% if user.is_authenticated %}
+    <span class="who" title="Signed in as {{ user.username }}">{{ user.username }}</span>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="link-btn">Sign out</button></form>
+  {% else %}
+    <a href="{% url 'login' %}" class="link-btn">Sign in</a>
+    <a href="{% url 'signup' %}" class="btn primary small">Create account</a>
+  {% endif %}
+</div>

@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Digest settings · Ledgerline</title>
+  <link rel="stylesheet" href="{% static 'automation/css/site.css' %}">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav__row">
+      <a class="brand" href="/"><span class="brand__mark"></span>Ledgerline</a>
+      <nav class="nav__links">
+        <a href="/">Reports</a>
+        <a href="{% url 'automation:settings' %}" class="is-active">Settings</a>
+        <span class="nav__user">{{ request.user.get_username }}</span>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Settings</p>
+      <h1>Your daily digest</h1>
+      <p class="lead">A short summary of yesterday’s report activity, delivered when it suits you.</p>
+    </div>
+  </section>
+
+  <main class="wrap grid">
+    <section class="card">
+      <h2>Delivery time</h2>
+      {% for m in messages %}<div class="alert alert--{{ m.tags }}">{{ m }}</div>{% endfor %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <label class="field" for="{{ form.send_time.id_for_label }}">{{ form.send_time.label }}</label>
+        {{ form.send_time }}
+        {{ form.send_time.errors }}
+        <p class="hint">Monday to Friday · {{ tz }}</p>
+
+        <label class="switch">
+          {{ form.enabled }}
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+          <span>{{ form.enabled.label }}</span>
+        </label>
+
+        <button class="btn" type="submit">Save preferences</button>
+      </form>
+      {% if pref %}
+      <p class="status {% if pref.enabled %}status--on{% endif %}">
+        {% if pref.enabled %}Next digests go out Mon–Fri at {{ pref.send_time|time:"H:i" }}.{% else %}Digest is turned off.{% endif %}
+      </p>
+      {% else %}
+      <p class="status">Until you choose a time you’ll get the team default of 09:00 on weekdays.</p>
+      {% endif %}
+    </section>
+
+    <aside class="card">
+      <h2>Exchange rates</h2>
+      <p class="hint">Refreshed every 30 minutes</p>
+      {% if rates %}
+      <table class="rates">
+        {% for r in rates %}<tr><td>{{ r.base }}/{{ r.quote }}</td><td>{{ r.rate|floatformat:4 }}</td></tr>{% endfor %}
+      </table>
+      <p class="hint">Updated {{ rates.0.fetched_at|timesince }} ago</p>
+      {% else %}
+      <p class="hint">No rates yet — the first sync will fill this in.</p>
+      {% endif %}
+    </aside>
+  </main>
+
+  <footer class="footer"><div class="wrap">© Ledgerline · Reports, delivered.</div></footer>
+</body>
+</html>

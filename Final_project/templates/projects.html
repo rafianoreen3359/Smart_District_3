@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-6 text-2xl font-bold">Projects</h1>
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+  {% for p in projects %}
+  <div class="card">
+    <h3 class="font-semibold">{{ p.name }}</h3>
+    <p class="mt-1 line-clamp-2 text-sm text-slate-500">{{ p.description }}</p>
+    <div class="mt-4 flex gap-2">
+      <a class="btn-primary" href="{% url 'board' p.pk %}">Board</a>
+      <a class="btn-ghost" href="{% url 'chat' p.pk %}">Chat</a>
+    </div>
+  </div>
+  {% empty %}<p class="text-slate-400">No projects.</p>{% endfor %}
+</div>
+{% endblock %}

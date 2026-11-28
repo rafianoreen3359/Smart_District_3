@@ -1,0 +1,50 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+
+<h1>Our Products</h1>
+<p class="subtitle">Explore our available products.</p>
+<div class="hero">
+    <h1>Welcome to Our Store</h1>
+    <p>
+        Discover our products and explore
+        our latest collection.
+    </p>
+</div>
+
+<h1>Our Products</h1>
+<p class="subtitle">
+    Find the products you are looking for.
+</p>
+
+<div class="product-grid">
+
+    {% for product in products %}
+
+    <div class="product-card">
+
+        <h2>{{ product.name }}</h2>
+
+        <p>{{ product.description }}</p>
+
+        <h3>Rs. {{ product.price }}</h3>
+
+        <a class="btn"
+           href="{% url 'product_detail' product.id %}">
+            View Product
+        </a>
+
+    </div>
+
+    {% empty %}
+
+    <p>No products available.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "sales/base.html" %}
+{% block title %}{{ p.name }}{% endblock %}
+{% block content %}
+<div class="narrow" data-poll-url="{% url 'product_status_json' p.pk %}" data-kind="product" id="live">
+  <p class="muted"><a href="{% url 'product_list' %}">← Catalog</a></p>
+  <div class="page-head"><h1>{{ p.name }}</h1><span class="badge badge--p-{{ p.state }}" data-bind="status">{{ p.get_state_display }}</span></div>
+  <p class="muted">{{ p.sku }} · ${{ p.price }}</p>
+  <div class="card">
+    <div class="variants" data-bind="variants">
+      {% for v in data.variants %}
+      <div class="variant {% if v.ready %}is-ready{% endif %}" data-label="{{ v.label }}">
+        <div class="variant__img">{% if v.ready %}<img src="{{ v.url }}" alt="{{ v.label }}">{% else %}<span class="spinner"></span>{% endif %}</div>
+        <strong>{{ v.label|title }}</strong><small>{{ v.px }}px max{% if v.ready %} · {{ v.size }}{% endif %}</small>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="alert alert--err" data-bind="error" {% if not p.error %}hidden{% endif %}>{{ p.error }}</div>
+    <div class="actions"><span class="chip" data-bind="conn">● live</span></div>
+  </div>
+</div>
+{% endblock %}
